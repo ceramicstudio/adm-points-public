@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DB")
+}
+
+
+model Missions {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  points      String?
+  difficulty  String?
+  persona     String?
+  duration    String?
+  frequency   String?
+  season      String?
+  startDate   String?
+  active      Boolean?
+  featured    Boolean?
+  url         String?
+}
+
+model Customers {
+  id            Int      @id @default(autoincrement())
+  participant   String[]
+  excitement    Int?
+  xUsername     String?
+  email         String?
+  address       String?
+  discordHandle String?
+  discordId     String?
+}
+
+model ContextPointAggregation {
+  id        Int      @id @default(autoincrement())
+  issuer    String
+  recipient String
+  points    Int
+  date      String
+  context   String
+}
+
+model TotalPointAggregation {
+  id        Int      @id @default(autoincrement())
+  issuer    String
+  recipient String
+  points    Int
+  date      String
+  verified  Boolean?
+}
+
+model ContextPointAllocation {
+  id          Int      @id @default(autoincrement())
+  issuer      String
+  recipient   String
+  points      Int
+  date        String
+  context     String
+  subContext  String?
+  trigger     String?
+  multiplier  Int?
+}
+
+model SimplePointAllocation {
+  id        Int      @id @default(autoincrement())
+  issuer    String
+  recipient String
+  points    Int
+}

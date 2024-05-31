@@ -1,5 +1,6 @@
 import { getNotion } from "@/utils/notion/index";
-import { patchMissions } from "@/utils/pg/patchMissions";
+// import { patchMissions } from "@/utils/pg/patchMissions";
+import {patchMissions} from "src/prisma/missions/index";
 import { type NextApiResponse, type NextApiRequest } from "next";
 import { type ObjectType } from "@/types";
 
