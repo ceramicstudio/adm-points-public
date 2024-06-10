@@ -9,6 +9,7 @@ export const decrypt = async ({
   hash: string;
 }) => {
   try {
+    await litNodeClient.connect();
     const code = `(async () => {
     const resp = await Lit.Actions.decryptAndCombine({
       accessControlConditions,
@@ -21,9 +22,10 @@ export const decrypt = async ({
     Lit.Actions.setResponse({ response: resp });
   })();`;
 
+  const sigs = await sessionSigs();
     const res = await litNodeClient.executeJs({
       code,
-      sessionSigs,
+      sessionSigs: sigs,
       jsParams: {
         accessControlConditions,
         ciphertext,

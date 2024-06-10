@@ -14,10 +14,11 @@ export const encrypt = async (
 ): Promise<{ ciphertext: string; dataToEncryptHash: string } | undefined> => {
   try {
     await litNodeClient.connect();
+    const sigs = await sessionSigs();
     const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString(
       {
         accessControlConditions,
-        sessionSigs,
+        sessionSigs: sigs,
         chain,
         dataToEncrypt: message,
       } as CustomEncryptStringRequest,

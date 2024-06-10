@@ -44,7 +44,7 @@ export const sessionSigs = async () => {
   const ethersSigner = provider.getSigner();
 
   await litNodeClient.connect();
-  await litNodeClient.getSessionSigs({
+  return await litNodeClient.getSessionSigs({
     chain: "ethereum",
     expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), // 24 hours
     resourceAbilityRequests: [
