@@ -1,8 +1,10 @@
 import { patchMissions } from "@/utils/pg/patchMissions";
-import { getNotion } from "@/utils/notion/index";
-import {totalsQueue} from "@/workers/totalAggregations.worker";
-import { getTweet } from "@/utils/twitter/index";
+import { saveCustomers } from "@/utils/apollo/saveCustomer";
+import { getDeform } from "@/utils/deform/getDeformData";
+import { getPgTotalCount } from "@/utils/pg/pgAggregationCount";
 import { type NextApiRequest, type NextApiResponse } from "next";
+
+const DEFORM_FORM_ID = process.env.DEFORM_FORM_ID ?? "";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
@@ -17,17 +19,37 @@ export default async function handler(_req: NextApiRequest, res: Response) {
   try {
     // const data = await getNotion();
     // const newData = await patchMissions(data!);
+    // fetch the DeForm data
+    const rows = await getDeform(DEFORM_FORM_ID).then((data) => {
+      return data?.data;
+    });
 
-    const data = await getTweet(
-      "https://x.com/ceramicnetwork/status/1793330992347771257",
-    );
-    const data2 = {
-      // any serializable data you want to provide for the job
-      // for this example, we'll provide a message
-      message: "This is a sample job",
-    };
-    await totalsQueue.add("totalsQueue", data2); 
-    return res.status(200).json({ status: "Message added to the queue" });
+    // failure mode for fetching DeForm data
+    if (!rows) {
+      return res.status(500).send({ error: "Unable to fetch DeForm data" });
+    }
+    //determine the total number of entries
+    const totalEntries = rows.length;
+    // await totalsQueue.add("totalsQueue", data2);
+    // return res.status(200).json({ status: "Message added to the queue" });
+
+    // fetch the total number of entries from the Postgres database
+    const aggregations = await getPgTotalCount().then((data) => {
+      return data?.aggregationCount;
+    });
+
+    // failure mode for fetching aggregation data
+    if (aggregations === undefined) {
+      return res
+        .status(500)
+        .send({ error: "Unable to fetch aggregation data" });
+    }
+
+    // first, save customers to Postgres
+    const customers = await saveCustomers({ rows, startRow: aggregations });
+    console.log(customers);
+    return res.status(200).send(customers);
+
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });
