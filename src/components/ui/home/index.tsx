@@ -9,6 +9,8 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {encrypt} from "@/components/lit/encrypt";
+import {decrypt} from "@/components/lit/decrypt";
 import {
   type Extended,
   type Guilds,
@@ -45,6 +47,8 @@ const HomeShowcase: React.FC = () => {
     if (address) {
       void getRecords(100).then(() => {
         setLoggedIn(true);
+        void decrypt({ciphertext: "mbDjZIaxSFZ9PmLzZrvYrSbaLM6DG6FtbEwS9ztbELSmewWCOF1be59O4uTLPAScP3bstv5TnRvONv4UMPC8x4RuGS+XBSOQ4Ebsl05p67MrJ5UnobNLes3Coo3QG0ZlW2B3aMUbVLmiMh5aElX2KcFYeScM6DMmjFjOQgM=", hash: "ca00c2e50caad9912d15f49ffa8b90d18d352a78c5265b9335a25cb98e516a17"})
+        
       });
     }
     if (!address) {
