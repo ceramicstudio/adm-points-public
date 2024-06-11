@@ -9,6 +9,8 @@ export const checkCeramicFast = async () => {
   try {
     const data = await curly.get(CERAMIC_API_1 + "/api/v0/node/healthcheck");
     if (data.statusCode !== 200 || data.data !== "Alive!") {
+      // wait 5 seconds to ensure nodes are synced
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       console.log("Ceramic node 1 is down, using node 2");
       return 2;
     }
